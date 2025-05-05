@@ -1,3 +1,66 @@
+:root {
+    font-family: "Roboto", "sans-serif";
+}
+
 body {
-    background-color: beige;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    display: grid;
+    grid-template-columns: minmax(250px, 1fr) 4fr;
+    height: 100vh;
+}
+
+nav {
+    grid-column: 1 / 2;
+    display: flex;
+    flex-direction: column;
+    background-color: #222831;
+    color: white;
+    padding: 20px 40px;
+    gap: 24px;
+}
+
+.logo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo > img {
+    height: 64px;
+}
+
+.logo > h1 {
+    font-size: 2rem;
+}
+
+.projects {
+    display: flex;
+    flex-direction: column;
+}
+
+.projects-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.projects-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.projects > h1 {
+    font-size: 1.7rem;
+}
+
+main {
+    grid-column: 2 / 3;
+    background-color: #393e46;
+    color: white;
 }
