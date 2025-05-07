@@ -27,14 +27,6 @@ projects[0].tasks.push(new Task("create", "create deez nuts", "last year", "low"
 projects[0].tasks.push(new Task("update", "update deez nuts", "last year", "high"));
 
 // FUNCTIONS
-function findProjectIndex(id) {
-    const projectIndex = projects.findIndex(project => project.id === id);
-
-    if (projectIndex !== -1) {
-        return projectIndex;
-    }
-}
-
 function deleteProject(id) {
     const projectIndex = projects.findIndex(project => project.id === id);
 
@@ -60,7 +52,6 @@ function displayProjects() {
     });
 
     const projectsCard = document.querySelectorAll(".projects-card");
-    console.log(projectsCard);
     projectsCard.forEach(card => {
         card.addEventListener("click", () => {
             displayContent(card.getAttribute("data-project-id"));
@@ -68,26 +59,77 @@ function displayProjects() {
     });
 }
 
+// function displayContent(id) {
+//     const contentHeader = document.querySelector(".content-header");
+//     const tasksList = document.querySelector(".tasks-list");
+//     const projectIndex = projects.findIndex(project => project.id === id);
+
+//     if (projectIndex !== -1) {
+//         contentHeader.innerHTML = `
+//             <h1>${projects[projectIndex].name}</h1>
+//             <button type="button" class="btn-add-task">Add Task</button>
+//         `;
+
+//         tasksList.innerHTML = projects[projectIndex].tasks.map(task => `
+//             <div class="task-card">
+//                 <h3>${task.title}</h3>
+//                 <h3>${task.description}</h3>
+//                 <h3>${task.deadline}</h3>
+//                 <h3>${task.priority}</h3>
+//                 <h3>${task.isDone}</h3>
+//             </div>
+//         `).join("");
+
+//         const btnAddTask = document.querySelector(".btn-add-task");
+//         btnAddTask.addEventListener("click", () => {
+//             alert("Hello");
+//         });
+//     }
+
+//     else {
+//         contentHeader.innerHTML = `<h1>No Project Selected</h1>`;
+//         tasksList.innerHTML = "";
+//     }
+// }
+
 function displayContent(id) {
+    const content = document.querySelector(".content");
     const projectIndex = projects.findIndex(project => project.id === id);
 
-    const contentHeader = document.querySelector(".content-header");
-    const tasksList = document.querySelector(".tasks-list");
+    if (projectIndex !== -1) {
+        content.innerHTML = `
+            <div class="content-header">
+                <h1>${projects[projectIndex].name}</h1>
+                <button type="button" class="btn-add-task">Add Task</button>
+            </div>
 
-    contentHeader.innerHTML = `
-        <h1>${projects[projectIndex].name}</h1>
-        <button type="button" class="btn-add-task">Add Task</button>
-    `;
+            <div class="tasks-list"></div>
+        `;
+        
+        const tasksList = document.querySelector(".tasks-list");
+        tasksList.innerHTML = projects[projectIndex].tasks.map(task => `
+            <div class="task-card">
+                <h3>${task.title}</h3>
+                <h3>${task.description}</h3>
+                <h3>${task.deadline}</h3>
+                <h3>${task.priority}</h3>
+                <h3>${task.isDone}</h3>
+            </div>
+        `).join("");
 
-    tasksList.innerHTML = projects[projectIndex].tasks.map(task => `
-        <div class="task-card">
-            <h3>${task.title}</h3>
-            <h3>${task.description}</h3>
-            <h3>${task.deadline}</h3>
-            <h3>${task.priority}</h3>
-            <h3>${task.isDone}</h3>
-        </div>
-    `).join("");
+        const btnAddTask = document.querySelector(".btn-add-task");
+        btnAddTask.addEventListener("click", () => {
+            // alert("Hello");
+            projects[0].tasks.push(new Task("update3", "update deez nuts", "last year", "high"));
+            displayContent(id);
+        });
+    }
+
+    else {
+        content.innerHTML = `
+            <h1>No Project Selected</h1>
+        `;
+    }
 }
 
 // DOM
@@ -130,5 +172,5 @@ btnConfirmProject.addEventListener("click", (e) => {
 // Initial
 document.addEventListener('DOMContentLoaded', () => {
     displayProjects();
-    // displayContent();
+    displayContent();
 });

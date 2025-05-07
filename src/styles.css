@@ -7,6 +7,10 @@ body {
     padding: 0;
 }
 
+button {
+    cursor: pointer;
+}
+
 .container {
     display: grid;
     grid-template-columns: minmax(250px, 1fr) 4fr;
@@ -49,6 +53,24 @@ body {
     align-items: center;
 }
 
+.btn-add-project {
+    border: none;
+    border-radius: 5px;
+    background-color: #2e8a8f;
+    color: white;
+    padding: 10px;
+    font-weight: bold;
+}
+
+.btn-delete-project {
+    border: none;
+    border-radius: 5px;
+    background-color: #bf001a;
+    color: white;
+    padding: 10px;
+    font-weight: bold;
+}
+
 .projects-card {
     display: flex;
     justify-content: space-between;
@@ -85,9 +107,21 @@ body {
 .tasks-list {
     display: flex;
     flex-direction: column;
+    gap: 20px;
 }
 
 .task-card {
     display: flex;
     justify-content: space-around;
+    background-color: #4d545f;
+    border-radius: 10px;
+}
+
+.btn-add-task {
+    border: none;
+    border-radius: 5px;
+    background-color: #3667c9;
+    color: white;
+    padding: 10px;
+    font-weight: bold;
 }
