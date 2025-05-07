@@ -13,7 +13,7 @@ body {
     height: 100vh;
 }
 
-nav {
+.sidebar {
     grid-column: 1 / 2;
     display: flex;
     flex-direction: column;
@@ -53,14 +53,41 @@ nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    cursor: pointer;
+    padding: 0 5px;
+    border: 1px solid transparent;
+    border-radius: 10px;
 }
 
-.projects > h1 {
-    font-size: 1.7rem;
+.projects-card:hover {
+    border: 1px solid white;
+    border-radius: 10px;
 }
 
-main {
+.projects-card.active {
+    border: 1px solid white;
+    border-radius: 10px;
+}
+
+.content {
     grid-column: 2 / 3;
     background-color: #393e46;
     color: white;
+    padding: 20px;
+}
+
+.content-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.tasks-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.task-card {
+    display: flex;
+    justify-content: space-around;
 }

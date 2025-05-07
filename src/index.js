@@ -1,6 +1,6 @@
 import "./styles.css";
 
-const projects = [];
+const projects = []; // stores Project objects
 
 class Project {
     constructor(name, id = crypto.randomUUID()) {
@@ -20,39 +20,74 @@ class Task {
     }
 }
 
-const defaultProject = new Project("Default", "1");
-projects.push(defaultProject);
-
-// console.log(projects.find((element) => element.name === "Omega Star").tasks);
-// let projIndex = projects.findIndex(element => element.name === "Super Star"); // find project index from array
-
 const projectsList = document.querySelector(".projects-list");
 
-// FUNCTIONS
-function deleteProject(projectsArr, id) {
-    const index = projectsArr.findIndex(project => project.id === id);
+projects.push(new Project("Default", "1"));
+projects[0].tasks.push(new Task("create", "create deez nuts", "last year", "low"));
+projects[0].tasks.push(new Task("update", "update deez nuts", "last year", "high"));
 
-    if (index !== -1) {
-        // console.log(`Deleted ${projectsArr[index].name}`)
-        projectsArr.splice(index, 1);
+// FUNCTIONS
+function findProjectIndex(id) {
+    const projectIndex = projects.findIndex(project => project.id === id);
+
+    if (projectIndex !== -1) {
+        return projectIndex;
+    }
+}
+
+function deleteProject(id) {
+    const projectIndex = projects.findIndex(project => project.id === id);
+
+    if (projectIndex !== -1) {
+        projects.splice(projectIndex, 1);
     }
 }
 
 function displayProjects() {
     projectsList.innerHTML = projects.map(project => `
-        <div class="projects-card">
+        <div class="projects-card" data-project-id="${project.id}">
             <h3>${project.name}</h3>
-            <button type="button" class="btn-delete-project" data-project-id="${project.id}">- Delete Project</button>
+            <button type="button" class="btn-delete-project" data-project-id="${project.id}">Delete</button>
         </div>
     `).join("");
 
     const btnDeleteProject = document.querySelectorAll(".btn-delete-project");
     btnDeleteProject.forEach(btn => {
         btn.addEventListener("click", () => {
-            deleteProject(projects, btn.getAttribute("data-project-id"));
+            deleteProject(btn.getAttribute("data-project-id"));
             displayProjects();
         });
     });
+
+    const projectsCard = document.querySelectorAll(".projects-card");
+    console.log(projectsCard);
+    projectsCard.forEach(card => {
+        card.addEventListener("click", () => {
+            displayContent(card.getAttribute("data-project-id"));
+        });
+    });
+}
+
+function displayContent(id) {
+    const projectIndex = projects.findIndex(project => project.id === id);
+
+    const contentHeader = document.querySelector(".content-header");
+    const tasksList = document.querySelector(".tasks-list");
+
+    contentHeader.innerHTML = `
+        <h1>${projects[projectIndex].name}</h1>
+        <button type="button" class="btn-add-task">Add Task</button>
+    `;
+
+    tasksList.innerHTML = projects[projectIndex].tasks.map(task => `
+        <div class="task-card">
+            <h3>${task.title}</h3>
+            <h3>${task.description}</h3>
+            <h3>${task.deadline}</h3>
+            <h3>${task.priority}</h3>
+            <h3>${task.isDone}</h3>
+        </div>
+    `).join("");
 }
 
 // DOM
@@ -90,8 +125,10 @@ btnConfirmProject.addEventListener("click", (e) => {
     projectsForm.reset();
     projectsModal.close();
     displayProjects();
-    console.log(projects);
 });
 
 // Initial
-displayProjects();
+document.addEventListener('DOMContentLoaded', () => {
+    displayProjects();
+    // displayContent();
+});

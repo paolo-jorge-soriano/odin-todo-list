@@ -9,7 +9,7 @@
 
     <body>
         <div class="container">
-            <nav>
+            <nav class="sidebar">
                 <div class="logo">
                     <img src="./img/to-do-list-icon.png" alt="to-do-list-icon">
                     <h1>To-Do List</h1>
@@ -21,17 +21,19 @@
                         <button type="button" class="btn-add-project">+ Add Project</button>
                     </div>
 
-                    <div class="projects-list">
-                        <!-- <div class="projects-card">
-                            <h3>test_title</h3>
-                            <button type="button">- Delete Project</button>
-                        </div> -->
-                    </div>
+                    <div class="projects-list"></div>
                 </div>
             </nav>
 
-            <main>
-                <h1>this is main</h1>
+            <main class="content">
+                <div class="content-header">
+                    <h1>Death Star</h1>
+                    <button type="button" class="btn-add-task">Add Task</button>
+                </div>
+
+                <div class="tasks-list">
+                    
+                </div>
             </main>
 
             <dialog class="projects-modal">
