@@ -1,7 +1,6 @@
 import "./styles.css";
 
-const projects = []; // stores Project objects
-
+// Classes
 class Project {
     constructor(name, id = crypto.randomUUID()) {
         this.id = id;
@@ -12,6 +11,7 @@ class Project {
 
 class Task {
     constructor(title, description, deadline, priority) {
+        this.id = crypto.randomUUID();
         this.title = title;
         this.description = description;
         this.deadline = deadline;
@@ -20,11 +20,11 @@ class Task {
     }
 }
 
+// Variables
+const projects = []; // stores Project objects
 const projectsList = document.querySelector(".projects-list");
 
 projects.push(new Project("Default", "1"));
-projects[0].tasks.push(new Task("create", "create deez nuts", "last year", "low"));
-projects[0].tasks.push(new Task("update", "update deez nuts", "last year", "high"));
 
 // FUNCTIONS
 function deleteProject(id) {
@@ -59,39 +59,6 @@ function displayProjects() {
     });
 }
 
-// function displayContent(id) {
-//     const contentHeader = document.querySelector(".content-header");
-//     const tasksList = document.querySelector(".tasks-list");
-//     const projectIndex = projects.findIndex(project => project.id === id);
-
-//     if (projectIndex !== -1) {
-//         contentHeader.innerHTML = `
-//             <h1>${projects[projectIndex].name}</h1>
-//             <button type="button" class="btn-add-task">Add Task</button>
-//         `;
-
-//         tasksList.innerHTML = projects[projectIndex].tasks.map(task => `
-//             <div class="task-card">
-//                 <h3>${task.title}</h3>
-//                 <h3>${task.description}</h3>
-//                 <h3>${task.deadline}</h3>
-//                 <h3>${task.priority}</h3>
-//                 <h3>${task.isDone}</h3>
-//             </div>
-//         `).join("");
-
-//         const btnAddTask = document.querySelector(".btn-add-task");
-//         btnAddTask.addEventListener("click", () => {
-//             alert("Hello");
-//         });
-//     }
-
-//     else {
-//         contentHeader.innerHTML = `<h1>No Project Selected</h1>`;
-//         tasksList.innerHTML = "";
-//     }
-// }
-
 function displayContent(id) {
     const content = document.querySelector(".content");
     const projectIndex = projects.findIndex(project => project.id === id);
@@ -105,7 +72,7 @@ function displayContent(id) {
 
             <div class="tasks-list"></div>
         `;
-        
+
         const tasksList = document.querySelector(".tasks-list");
         tasksList.innerHTML = projects[projectIndex].tasks.map(task => `
             <div class="task-card">
@@ -114,14 +81,23 @@ function displayContent(id) {
                 <h3>${task.deadline}</h3>
                 <h3>${task.priority}</h3>
                 <h3>${task.isDone}</h3>
+                <button type="button" class="btn-delete-task" data-task-id="${task.id}">Delete</button>
             </div>
         `).join("");
 
         const btnAddTask = document.querySelector(".btn-add-task");
-        btnAddTask.addEventListener("click", () => {
-            // alert("Hello");
-            projects[0].tasks.push(new Task("update3", "update deez nuts", "last year", "high"));
-            displayContent(id);
+        btnAddTask.addEventListener("click", (e) => {
+            e.preventDefault();
+            btnConfirmTask.setAttribute("data-project-index", projectIndex);
+            taskModal.showModal();
+        });
+
+        const btnDeleteTask = document.querySelectorAll(".btn-delete-task");
+        btnDeleteTask.forEach(btn => {
+            btn.addEventListener("click", () => {
+                projects[projectIndex].tasks = projects[projectIndex].tasks.filter(task => task.id !== btn.getAttribute("data-task-id"));
+                displayContent(id);
+            });
         });
     }
 
@@ -134,7 +110,7 @@ function displayContent(id) {
 
 // DOM
 
-// Projects Modal
+// Create Projects Modal
 const projectsModal = document.querySelector(".projects-modal");
 const projectsForm = document.querySelector(".projects-form");
 
@@ -153,14 +129,14 @@ btnCloseProject.addEventListener("click", (e) => {
 const btnConfirmProject = document.querySelector(".btn-confirm-project");
 btnConfirmProject.addEventListener("click", (e) => {
     e.preventDefault();
-    const projectTitle = document.getElementById("project-title").value;
+    const projectName = document.getElementById("project-name").value;
 
-    if (!projectTitle) {
-        alert("Please input something!");
+    if (!projectName) {
+        alert("Please fill out all fields!");
         return;
     }
-    
-    let newProject = new Project(projectTitle);
+
+    let newProject = new Project(projectName);
 
     projects.push(newProject);
 
@@ -169,8 +145,42 @@ btnConfirmProject.addEventListener("click", (e) => {
     displayProjects();
 });
 
+// Add Task Modal
+const taskModal = document.querySelector(".task-modal");
+const taskForm = document.querySelector(".task-form");
+
+const btnCloseTask = document.querySelector(".btn-close-task");
+btnCloseTask.addEventListener("click", (e) => {
+    e.preventDefault();
+    taskForm.reset();
+    taskModal.close();
+});
+
+const btnConfirmTask = document.querySelector(".btn-confirm-task");
+btnConfirmTask.addEventListener("click", (e) => {
+    e.preventDefault();
+    const taskTitle = document.getElementById("task-title").value;
+    const taskDescription = document.getElementById("task-description").value;
+    const taskDeadline = document.getElementById("task-deadline").value;
+    const taskPriority = document.getElementById("task-priority").value;
+
+    if (!taskTitle || !taskDescription || !taskDeadline || taskPriority === "") {
+        alert("Please fill out all fields!");
+        return;
+    }
+
+    let newTask = new Task(taskTitle, taskDescription, taskDeadline, taskPriority);
+
+    const projectIndex = btnConfirmTask.getAttribute("data-project-index");
+
+    projects[projectIndex].tasks.push(newTask);
+    taskForm.reset();
+    taskModal.close();
+
+    displayContent(projects[projectIndex].id);
+});
+
 // Initial
 document.addEventListener('DOMContentLoaded', () => {
     displayProjects();
-    displayContent();
 });
