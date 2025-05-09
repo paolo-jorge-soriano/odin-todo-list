@@ -10,13 +10,13 @@ class Project {
 }
 
 class Task {
-    constructor(title, description, deadline, priority) {
+    constructor(title, description, deadline, priority, isDone = false) {
         this.id = crypto.randomUUID();
         this.title = title;
         this.description = description;
         this.deadline = deadline;
         this.priority = priority;
-        this.isDone = false;
+        this.isDone = isDone;
     }
 }
 
@@ -25,6 +25,8 @@ const projects = []; // stores Project objects
 const projectsList = document.querySelector(".projects-list");
 
 projects.push(new Project("Default", "1"));
+projects[0].tasks.push(new Task("taskTitle", "taskDescription", "taskDeadline", "low"));
+projects[0].tasks.push(new Task("taskTitle2", "taskDescription2", "taskDeadline2", "medium", true));
 
 // FUNCTIONS
 function deleteProject(id) {
@@ -75,15 +77,32 @@ function displayContent(id) {
 
         const tasksList = document.querySelector(".tasks-list");
         tasksList.innerHTML = projects[projectIndex].tasks.map(task => `
-            <div class="task-card">
-                <h3>${task.title}</h3>
-                <h3>${task.description}</h3>
-                <h3>${task.deadline}</h3>
-                <h3>${task.priority}</h3>
-                <h3>${task.isDone}</h3>
-                <button type="button" class="btn-delete-task" data-task-id="${task.id}">Delete</button>
+            <div class="task-card ${task.isDone ? "complete":"ongoing"} ${task.priority.toLowerCase()}">
+                <div class="checkbox-container">
+                    <input type="checkbox" class="mark-as-complete" data-task-id="${task.id}" ${task.isDone ? "checked":""}>
+                </div>
+
+                <div class="task-info">
+                    <h3>${task.title}</h3>
+                    <h3>${task.description}</h3>
+                    <h3>${task.deadline}</h3>
+                    <h3>${task.priority}</h3>
+                </div>
+
+                <div class="delete-task-container">
+                    <button type="button" class="btn-delete-task" data-task-id="${task.id}">Delete</button>
+                </div>
             </div>
         `).join("");
+
+        const markAsComplete = document.querySelectorAll(".mark-as-complete");
+        markAsComplete.forEach(input => {
+            input.addEventListener("click", () => {
+                const taskIndex = projects[projectIndex].tasks.findIndex(task => task.id === input.getAttribute("data-task-id"));
+                projects[projectIndex].tasks[taskIndex].isDone = !projects[projectIndex].tasks[taskIndex].isDone;
+                displayContent(id);
+            });
+        });
 
         const btnAddTask = document.querySelector(".btn-add-task");
         btnAddTask.addEventListener("click", (e) => {
@@ -183,4 +202,5 @@ btnConfirmTask.addEventListener("click", (e) => {
 // Initial
 document.addEventListener('DOMContentLoaded', () => {
     displayProjects();
+    displayContent();
 });
