@@ -1,9 +1,9 @@
 import "./styles.css";
 
-// Classes
+// CLASSES
 class Project {
-    constructor(name, id = crypto.randomUUID()) {
-        this.id = id;
+    constructor(name) {
+        this.id = crypto.randomUUID();
         this.name = name;
         this.tasks = [];
     }
@@ -20,13 +20,9 @@ class Task {
     }
 }
 
-// Variables
-const projects = []; // stores Project objects
+// VARIABLES
+let projects = []; // stores Project objects
 const projectsList = document.querySelector(".projects-list");
-
-projects.push(new Project("Default", "1"));
-projects[0].tasks.push(new Task("taskTitle", "taskDescription", "taskDeadline", "low"));
-projects[0].tasks.push(new Task("taskTitle2", "taskDescription2", "taskDeadline2", "medium", true));
 
 // FUNCTIONS
 function deleteProject(id) {
@@ -49,6 +45,7 @@ function displayProjects() {
     btnDeleteProject.forEach(btn => {
         btn.addEventListener("click", () => {
             deleteProject(btn.getAttribute("data-project-id"));
+            saveProjects();
             displayProjects();
         });
     });
@@ -100,6 +97,7 @@ function displayContent(id) {
             input.addEventListener("click", () => {
                 const taskIndex = projects[projectIndex].tasks.findIndex(task => task.id === input.getAttribute("data-task-id"));
                 projects[projectIndex].tasks[taskIndex].isDone = !projects[projectIndex].tasks[taskIndex].isDone;
+                saveProjects();
                 displayContent(id);
             });
         });
@@ -115,6 +113,7 @@ function displayContent(id) {
         btnDeleteTask.forEach(btn => {
             btn.addEventListener("click", () => {
                 projects[projectIndex].tasks = projects[projectIndex].tasks.filter(task => task.id !== btn.getAttribute("data-task-id"));
+                saveProjects();
                 displayContent(id);
             });
         });
@@ -127,7 +126,7 @@ function displayContent(id) {
     }
 }
 
-// DOM
+// DOM Manipulation
 
 // Create Projects Modal
 const projectsModal = document.querySelector(".projects-modal");
@@ -161,6 +160,7 @@ btnConfirmProject.addEventListener("click", (e) => {
 
     projectsForm.reset();
     projectsModal.close();
+    saveProjects();
     displayProjects();
 });
 
@@ -196,11 +196,43 @@ btnConfirmTask.addEventListener("click", (e) => {
     taskForm.reset();
     taskModal.close();
 
+    saveProjects();
     displayContent(projects[projectIndex].id);
 });
 
-// Initial
+// localStorage
+function saveProjects() {
+    localStorage.setItem("projects", JSON.stringify(projects));
+}
+
+function loadProjects() {
+    const stored = localStorage.getItem("projects");
+
+    if (!stored) {
+        return [];
+    }
+
+    const parsed = JSON.parse(stored);
+    return parsed.map(p => {
+        const project = new Project(p.name);
+
+        project.tasks = p.tasks.map(t => new Task(t.title, t.description, t.deadline, t.priority, t.isDone));
+
+        return project;
+    });
+}
+
+// ENTRY POINT
 document.addEventListener('DOMContentLoaded', () => {
+    projects = loadProjects();
+
+    // Initialize Default Project
+    if (projects.length === 0) {
+        projects.push(new Project("Default", "1"));
+        projects[0].tasks.push(new Task("Workout", "Focus on cardio", "2025-05-10", "Low", true));
+        projects[0].tasks.push(new Task("Programming", "Add localStorage", "2025-05-12", "High"));
+    }
+
     displayProjects();
     displayContent();
 });
